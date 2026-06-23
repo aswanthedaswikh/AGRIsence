@@ -3,40 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ESP32 IoT Control</title>
+    <title>AGRIsence IoT Dashboard</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <section class="topbar">
-        <div>
-          <p class="eyebrow">AWS IoT Dashboard</p>
-          <h1>ESP32 Control Panel</h1>
+      <section class="hero-panel">
+        <div class="brand-row">
+          <div>
+            <p class="eyebrow">AGRIsence</p>
+            <h1>ESP32 Device</h1>
+          </div>
+          <button id="refreshButton" class="refresh-button" type="button" title="Fetch NPK data">
+            Refresh
+          </button>
         </div>
-        <button id="refreshButton" class="icon-button" type="button" title="Fetch NPK data">
-          Fetch Data
+
+        <div class="device-card">
+          <div class="device-main">
+            <span id="connectionDot" class="status-dot checking"></span>
+            <div>
+              <p class="label">Device ID</p>
+              <h2 id="deviceState">esp32_01</h2>
+            </div>
+          </div>
+          <div class="status-copy">
+            <strong id="onlineState">Checking...</strong>
+            <span id="lastUpdated">Ready to request stored NPK data</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="menu-panel" aria-label="Menu options">
+        <button class="menu-button active" type="button" data-view="liveView">
+          <span>Live Data</span>
+          <small>NPK values</small>
+        </button>
+        <button class="menu-button" type="button" data-view="controlView">
+          <span>Control Panel</span>
+          <small>Motor control</small>
         </button>
       </section>
 
-      <section class="status-grid" aria-label="Device status">
-        <article class="panel">
-          <p class="label">Device</p>
-          <h2 id="deviceState">esp32_01</h2>
-          <p id="lastUpdated" class="muted">Ready to request stored NPK data</p>
-        </article>
-
-        <article class="panel">
-          <p class="label">AWS IoT Endpoint</p>
-          <h2 class="endpoint">axojaxudoqhck-ats.iot.ap-south-1.amazonaws.com</h2>
-          <p class="muted">Used by your ESP32/AWS backend, not directly by this browser app.</p>
-        </article>
-      </section>
-
-      <section class="control-surface">
-        <div class="section-title">
+      <section id="liveView" class="view-section active">
+        <div class="section-heading">
           <div>
-            <p class="eyebrow">Stored Data</p>
-            <h2>NPK Values Request</h2>
+            <p class="eyebrow">Live Data</p>
+            <h2>What we are getting</h2>
           </div>
           <p id="requestState" class="muted">Ready</p>
         </div>
@@ -58,25 +71,39 @@
           </div>
           <button class="primary-action" type="submit">Read NPK Values</button>
         </form>
+
+        <div class="npk-grid" aria-label="Latest NPK values">
+          <article class="metric-card nitrogen">
+            <p class="label">Nitrogen</p>
+            <h2 id="nitrogenValue">--</h2>
+          </article>
+          <article class="metric-card phosphorus">
+            <p class="label">Phosphorus</p>
+            <h2 id="phosphorusValue">--</h2>
+          </article>
+          <article class="metric-card potassium">
+            <p class="label">Potassium</p>
+            <h2 id="potassiumValue">--</h2>
+          </article>
+        </div>
       </section>
 
-      <section class="npk-grid" aria-label="Latest NPK values">
-        <article class="metric-card nitrogen">
-          <p class="label">Nitrogen</p>
-          <h2 id="nitrogenValue">--</h2>
-        </article>
-        <article class="metric-card phosphorus">
-          <p class="label">Phosphorus</p>
-          <h2 id="phosphorusValue">--</h2>
-        </article>
-        <article class="metric-card potassium">
-          <p class="label">Potassium</p>
-          <h2 id="potassiumValue">--</h2>
-        </article>
+      <section id="controlView" class="view-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Control Panel</p>
+            <h2>Motor Control</h2>
+          </div>
+        </div>
+
+        <div class="control-grid">
+          <button id="motorOnButton" class="motor-button on" type="button">Motor ON</button>
+          <button id="motorOffButton" class="motor-button off" type="button">Motor OFF</button>
+        </div>
       </section>
 
-      <section class="panel">
-        <div class="section-title compact">
+      <section class="message-panel">
+        <div class="section-heading compact">
           <div>
             <p class="eyebrow">Messages</p>
             <h2>Latest API Data</h2>

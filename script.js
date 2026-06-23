@@ -10,9 +10,15 @@ const dataRequestForm = document.querySelector("#dataRequestForm");
 const deviceId = document.querySelector("#deviceId");
 const startDate = document.querySelector("#startDate");
 const endDate = document.querySelector("#endDate");
+const onlineState = document.querySelector("#onlineState");
+const connectionDot = document.querySelector("#connectionDot");
 const nitrogenValue = document.querySelector("#nitrogenValue");
 const phosphorusValue = document.querySelector("#phosphorusValue");
 const potassiumValue = document.querySelector("#potassiumValue");
+const menuButtons = document.querySelectorAll("[data-view]");
+const viewSections = document.querySelectorAll(".view-section");
+const motorOnButton = document.querySelector("#motorOnButton");
+const motorOffButton = document.querySelector("#motorOffButton");
 
 function showMessage(title, data) {
   const time = new Date().toLocaleString();
@@ -25,6 +31,12 @@ function setBusy(isBusy, text = "Ready") {
   document.querySelectorAll("button").forEach((button) => {
     button.disabled = isBusy;
   });
+}
+
+function setConnectionState(state, text) {
+  connectionDot.classList.remove("checking", "online", "offline");
+  connectionDot.classList.add(state);
+  onlineState.textContent = text;
 }
 
 async function readStoredData() {
@@ -47,6 +59,7 @@ async function readStoredData() {
   }
 
   setBusy(true, "Reading NPK data...");
+  setConnectionState("checking", "Checking...");
 
   try {
     const response = await fetch(API_URL, {
@@ -62,6 +75,7 @@ async function readStoredData() {
     const npk = extractNpkValues(data);
     updateNpkCards(npk);
     deviceState.textContent = requestBody.device_id;
+    setConnectionState(response.ok ? "online" : "offline", response.ok ? "Online" : "API Error");
     lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
     showMessage(response.ok ? "NPK data response" : "API error response", {
       request: requestBody,
@@ -69,6 +83,7 @@ async function readStoredData() {
     });
   } catch (error) {
     deviceState.textContent = "Connection Failed";
+    setConnectionState("offline", "Offline");
     lastUpdated.textContent = "Check API URL, CORS, and request body.";
     showMessage("NPK request error", { request: requestBody, message: error.message, apiUrl: API_URL });
   } finally {
@@ -147,11 +162,37 @@ function updateNpkCards(npk) {
   potassiumValue.textContent = npk.potassium;
 }
 
+function switchView(viewId) {
+  menuButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.view === viewId);
+  });
+
+  viewSections.forEach((section) => {
+    section.classList.toggle("active", section.id === viewId);
+  });
+}
+
+function showPendingCommand(command) {
+  showMessage(`${command} command`, {
+    status: "UI ready",
+    nextStep: "Connect this button to your AWS command API endpoint.",
+    expectedFlow: "Mobile app -> API Gateway -> AWS IoT topic -> ESP32 motor",
+    command,
+  });
+}
+
 refreshButton.addEventListener("click", readStoredData);
 
 dataRequestForm.addEventListener("submit", (event) => {
   event.preventDefault();
   readStoredData();
 });
+
+menuButtons.forEach((button) => {
+  button.addEventListener("click", () => switchView(button.dataset.view));
+});
+
+motorOnButton.addEventListener("click", () => showPendingCommand("MOTOR_ON"));
+motorOffButton.addEventListener("click", () => showPendingCommand("MOTOR_OFF"));
 
 readStoredData();
