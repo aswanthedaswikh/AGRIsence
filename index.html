@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESP32 IoT Control</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">AWS IoT Dashboard</p>
+          <h1>ESP32 Control Panel</h1>
+        </div>
+        <button id="refreshButton" class="icon-button" type="button" title="Fetch NPK data">
+          Fetch Data
+        </button>
+      </section>
+
+      <section class="status-grid" aria-label="Device status">
+        <article class="panel">
+          <p class="label">Device</p>
+          <h2 id="deviceState">esp32_01</h2>
+          <p id="lastUpdated" class="muted">Ready to request stored NPK data</p>
+        </article>
+
+        <article class="panel">
+          <p class="label">AWS IoT Endpoint</p>
+          <h2 class="endpoint">axojaxudoqhck-ats.iot.ap-south-1.amazonaws.com</h2>
+          <p class="muted">Used by your ESP32/AWS backend, not directly by this browser app.</p>
+        </article>
+      </section>
+
+      <section class="control-surface">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Stored Data</p>
+            <h2>NPK Values Request</h2>
+          </div>
+          <p id="requestState" class="muted">Ready</p>
+        </div>
+
+        <form id="dataRequestForm" class="data-form">
+          <div class="field-grid">
+            <label>
+              Device ID
+              <input id="deviceId" name="deviceId" type="text" value="esp32_01" />
+            </label>
+            <label>
+              Start Date
+              <input id="startDate" name="startDate" type="text" value="18/6/2026" />
+            </label>
+            <label>
+              End Date
+              <input id="endDate" name="endDate" type="text" value="18/6/2026" />
+            </label>
+          </div>
+          <button class="primary-action" type="submit">Read NPK Values</button>
+        </form>
+      </section>
+
+      <section class="npk-grid" aria-label="Latest NPK values">
+        <article class="metric-card nitrogen">
+          <p class="label">Nitrogen</p>
+          <h2 id="nitrogenValue">--</h2>
+        </article>
+        <article class="metric-card phosphorus">
+          <p class="label">Phosphorus</p>
+          <h2 id="phosphorusValue">--</h2>
+        </article>
+        <article class="metric-card potassium">
+          <p class="label">Potassium</p>
+          <h2 id="potassiumValue">--</h2>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-title compact">
+          <div>
+            <p class="eyebrow">Messages</p>
+            <h2>Latest API Data</h2>
+          </div>
+        </div>
+        <pre id="messageOutput">No messages yet.</pre>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
