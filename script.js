@@ -20,6 +20,14 @@ const viewSections = document.querySelectorAll(".view-section");
 const motorOnButton = document.querySelector("#motorOnButton");
 const motorOffButton = document.querySelector("#motorOffButton");
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      // The app still works online if service worker registration is blocked.
+    });
+  });
+}
+
 function showMessage(title, data) {
   const time = new Date().toLocaleString();
   messageOutput.textContent = `[${time}] ${title}\n\n${JSON.stringify(data, null, 2)}`;
