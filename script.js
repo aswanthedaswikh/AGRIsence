@@ -192,11 +192,9 @@ function showPendingCommand(command) {
 
 async function sendControlCommand(state) {
   const requestBody = {
-    device_id: deviceId.value.trim() || "esp32_01",
-    gpio: 2,
-    state,
+    led: state,
   };
-  const commandName = state === 1 ? "MOTOR_ON" : "MOTOR_OFF";
+  const commandName = state === 1 ? "LED_ON" : "LED_OFF";
 
   setBusy(true, `Sending ${commandName}...`);
 

@@ -1,9 +1,9 @@
-const CACHE_NAME = "agrisence-dashboard-v2";
+const CACHE_NAME = "agrisence-dashboard-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css?v=2",
-  "./script.js?v=4",
+  "./script.js?v=5",
   "./manifest.webmanifest?v=1",
   "./icon-192.svg",
   "./icon-512.svg",
