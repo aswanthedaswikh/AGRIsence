@@ -1,5 +1,6 @@
 const AWS_IOT_ENDPOINT = "axojaxudoqhck-ats.iot.ap-south-1.amazonaws.com";
 const API_URL = "https://ia5xnyll1h.execute-api.ap-south-1.amazonaws.com/data";
+const CONTROL_API_URL = "https://gbptps9jj4.execute-api.ap-south-1.amazonaws.com/esp32-control";
 
 const deviceState = document.querySelector("#deviceState");
 const lastUpdated = document.querySelector("#lastUpdated");
@@ -189,6 +190,42 @@ function showPendingCommand(command) {
   });
 }
 
+async function sendControlCommand(state) {
+  const requestBody = {
+    device_id: deviceId.value.trim() || "esp32_01",
+    gpio: 2,
+    state,
+  };
+  const commandName = state === 1 ? "MOTOR_ON" : "MOTOR_OFF";
+
+  setBusy(true, `Sending ${commandName}...`);
+
+  try {
+    const response = await fetch(CONTROL_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    const data = await parseResponse(response);
+    showMessage(response.ok ? `${commandName} sent` : `${commandName} failed`, {
+      request: requestBody,
+      response: data,
+    });
+  } catch (error) {
+    showMessage(`${commandName} error`, {
+      request: requestBody,
+      message: error.message,
+      apiUrl: CONTROL_API_URL,
+    });
+  } finally {
+    setBusy(false);
+  }
+}
+
 refreshButton.addEventListener("click", readStoredData);
 
 dataRequestForm.addEventListener("submit", (event) => {
@@ -200,7 +237,7 @@ menuButtons.forEach((button) => {
   button.addEventListener("click", () => switchView(button.dataset.view));
 });
 
-motorOnButton.addEventListener("click", () => showPendingCommand("MOTOR_ON"));
-motorOffButton.addEventListener("click", () => showPendingCommand("MOTOR_OFF"));
+motorOnButton.addEventListener("click", () => sendControlCommand(1));
+motorOffButton.addEventListener("click", () => sendControlCommand(0));
 
 readStoredData();
